@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:ns1="org.escafe.burieditor.component.*" xmlns:ns2="org.escafe.toolbar.*"
+ width="100%" height="100%"
+ creationComplete="onCreationComplete()" keyUp="keyUp(event)">
+	<mx:Script source="EmbeddedBuriEditorScript.as"/>
+
+	<mx:HDividedBox top="10" bottom="10" left="10" right="10">
+		<mx:VDividedBox width="150" height="100%">
+			<mx:VBox width="100%" height="50%" verticalGap="0">
+				<mx:Label text="プロセス"/>
+				<mx:List id="processList" width="100%" height="100%" labelField="processName" doubleClickEnabled="true"
+				 change="onProcessListChange()" removed="onProcessListChange()" doubleClick="openProcessProperty()"/>
+				<mx:HBox>
+					<mx:Button label="追加" click="addProcess()"/>
+					<mx:Button label="削除" click="removeProcess()"
+					 enabled="{processList.selectedIndex >= 0}"/>
+				</mx:HBox>
+			</mx:VBox>
+			<mx:VBox width="100%" height="50%" verticalGap="0">
+				<mx:Label text="アクター"/>
+				<mx:List id="participantList" width="100%" height="100%" labelField="participantName" doubleClickEnabled="true"
+				 change="onParticipantListChange()" removed="onParticipantListChange()" click="onParticipantListClick()" doubleClick="openParticipantProperty()"/>
+				<mx:HBox>
+					<mx:Button label="追加" click="getCurrentProcess().addParticipant()"/>
+					<mx:Button label="削除" click="getCurrentProcess().removeParticipant(participantList.selectedIndex)"
+					 enabled="{participantList.selectedIndex >= 0}"/>
+				</mx:HBox>
+			</mx:VBox>
+		</mx:VDividedBox>
+
+		<mx:Canvas height="100%" width="100%">
+			<ns2:VToolBar top="19" left="0" verticalGap="4" id="toolbar">
+				<mx:Button id="point" icon="@Embed(source='/assets/icon/point.gif')" width="68" height="52" toolTip="選択"/>
+				<mx:Button id="transitionNormal" icon="@Embed(source='/assets/icon/transition.gif')" width="68" height="52" toolTip="トランジション"/>
+				<mx:UIComponent width="20" height="6"/>
+				<mx:Button id="manualActivity" icon="@Embed(source='/assets/icon/manual.gif')" width="68" height="52" toolTip="手動アクティビティ"/>
+				<mx:Button id="autoActivity" icon="@Embed(source='/assets/icon/auto.gif')" width="68" height="52" toolTip="自動アクティビティ"/>
+				<!--
+				<mx:Button id="manualTimerActivity" icon="@Embed(source='/assets/icon/manualTimer.gif')" width="68" height="52" toolTip="手動(時間制限)アクティビティ"/>
+				<mx:Button id="autoTimerActivity" icon="@Embed(source='/assets/icon/autoTimer.gif')" width="68" height="52" toolTip="自動(時間制限)アクティビティ"/>
+				-->
+				<mx:Button id="userActivity" icon="@Embed(source='/assets/icon/user.gif')" width="68" height="52" toolTip="手作業"/>
+				<mx:UIComponent width="20" height="6"/>
+				<mx:Button id="startActivity" icon="@Embed(source='/assets/icon/start.gif')" width="68" height="52" toolTip="開始"/>
+				<mx:Button id="stopActivity" icon="@Embed(source='/assets/icon/end.gif')" width="68" height="52" toolTip="終了"/>
+				<mx:Button id="commentActivity" icon="@Embed(source='/assets/icon/comment.gif')" width="68" height="52" toolTip="コメント"/>
+			</ns2:VToolBar>
+			<mx:Canvas bottom="0" width="100%" horizontalCenter="0">
+				<mx:HBox horizontalCenter="38">
+					<mx:Button label="Auto"/>
+					<mx:HSlider id="scaleSlider" bottom="10" minimum="10" maximum="200" value="100" change="scaleChange()" liveDragging="true"/>
+					<mx:Button label="100%" click="scaleSlider.value=100; scaleChange();" bottom="10"/>
+				</mx:HBox>
+			</mx:Canvas>
+			<mx:Label id="processName"  x="76" y="0" text="プロセス001"/>
+			<mx:ViewStack id="processStack" top="18" left="76" right="0" bottom="20" borderStyle="solid">
+			</mx:ViewStack>
+		</mx:Canvas>
+	</mx:HDividedBox>
+</mx:Canvas>

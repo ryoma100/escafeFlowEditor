@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml"
+ backgroundColor="#ffffff" borderStyle="none" horizontalGap="0" width="88" minWidth="88" resize="vbox.width=width-20" horizontalAlign="center" verticalAlign="middle">
+ 	<mx:UIComponent id="join" width="10" height="{vbox.height}" resize="drawJoin()"/>
+ 	<mx:VBox id="vbox" verticalGap="0" horizontalGap="0" borderStyle="outset" borderColor="#808080">
+ 		<mx:Text id="paticipantName" text="" width="100%" selectable="false"/>
+		<mx:Canvas id="activities" width="100%">
+			<mx:Image id="manualActivity" source="@Embed(source='/assets/smallActivity/manual.PNG')" width="64" height="48" visible="true" horizontalCenter="0"/>
+			<mx:Image id="manualTimerActivity" source="@Embed(source='/assets/smallActivity/manualTimer.PNG')" width="64" height="48" visible="false" horizontalCenter="0"/>
+			<mx:Image id="autoActivity" source="@Embed(source='/assets/smallActivity/auto.PNG')" width="64" height="48" visible="false" horizontalCenter="0"/>
+			<mx:Image id="autoTimerActivity" source="@Embed(source='/assets/smallActivity/autoTimer.PNG')" width="64" height="48" visible="false" horizontalCenter="0"/>
+			<mx:Image id="userActivity" source="@Embed(source='/assets/smallActivity/user.PNG')" width="64" height="48" visible="false" horizontalCenter="0"/>
+		</mx:Canvas>
+		<mx:Text id="activityName" text="" width="100%" selectable="false"/>
+ 	</mx:VBox>
+ 	<mx:UIComponent id="split" width="10" height="{vbox.height}" resize="drawSplit()"/>
+ 	
+ 	<mx:Script>
+ 		<![CDATA[
+ 			import org.escafe.burieditor.BuriEditorConst;
+
+ 			private var _joinTypeId: String = BuriEditorConst.ID_NOT_JOIN;
+ 			private var _splitTypeId: String = BuriEditorConst.ID_NOT_SPLIT;
+
+			public function get joinTypeId(): String {
+				return _joinTypeId;
+			} 
+			
+ 			public function set joinTypeId(newId: String): void {
+ 				_joinTypeId = newId;
+				drawJoin();
+ 			}
+ 			
+ 			private function drawJoin(): void {
+ 				var g: Graphics = join.graphics;
+ 				g.clear();
+				g.lineStyle(1, vbox.getStyle("borderColor"));
+				switch (_joinTypeId) {
+					case BuriEditorConst.ID_NOT_JOIN:
+						// 何も描画しない
+						break;
+					case BuriEditorConst.ID_ONE_JOIN:
+	 					g.moveTo(0, join.height * 0.5);
+	 					g.lineTo(join.width, join.height * 0.5);
+	 					break;
+	 				case BuriEditorConst.ID_XOR_JOIN:
+		 				g.moveTo(0, 0);
+		 				g.lineTo(0, join.height);
+	 					g.moveTo(0, join.height * 0.5);
+	 					g.lineTo(join.width, join.height * 0.5);
+	 					break;
+	 				case BuriEditorConst.ID_AND_JOIN:
+		 				g.moveTo(join.width * 0.5, join.height * 0.25);
+		 				g.lineTo(join.width * 0.5, join.height * 0.75);
+	 					g.moveTo(0, 0);
+	 					g.lineTo(join.width, join.height * 0.5);
+	 					g.lineTo(0, join.height);
+	 					break;
+		 		}
+	 		}
+ 			
+ 			public function get splitTypeId(): String {
+ 				return _splitTypeId;
+ 			}
+ 			
+ 			public function set splitTypeId(newId: String): void {
+ 				_splitTypeId = newId;
+ 				drawSplit();
+ 			}
+ 			
+ 			private function drawSplit(): void {
+ 				var g: Graphics = split.graphics;
+ 				g.clear();
+				g.lineStyle(1, vbox.getStyle("borderColor"));
+				switch (_splitTypeId) {
+					case BuriEditorConst.ID_NOT_SPLIT:
+						// 何も描画しない
+						break;
+					case BuriEditorConst.ID_ONE_SPLIT:
+	 					g.moveTo(0, split.height * 0.5);
+	 					g.lineTo(split.width, split.height * 0.5);
+	 					break;
+	 				case BuriEditorConst.ID_XOR_SPLIT:
+		 				g.moveTo(split.width, 0);
+		 				g.lineTo(split.width, split.height);
+	 					g.moveTo(0, split.height * 0.5);
+	 					g.lineTo(split.width, split.height * 0.5);
+	 					break;
+	 				case BuriEditorConst.ID_AND_SPLIT:
+		 				g.moveTo(split.width * 0.5, split.height * 0.25);
+		 				g.lineTo(split.width * 0.5, split.height * 0.75);
+		 				g.moveTo(split.width, 0);
+	 					g.lineTo(0, split.height * 0.5);
+	 					g.lineTo(split.width, split.height);
+	 					break;
+				}
+ 			}
+ 		]]>
+ 	</mx:Script>
+</mx:HBox>

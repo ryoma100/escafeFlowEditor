@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="180" title="接続の編集"
+ showCloseButton="true" creationComplete="onCreationComplete()" close="onCancelButtonClick()" keyDown="keyDown(event)">
+	<mx:Label x="10" y="10" text="ID："/>
+	<mx:TextInput id="xpdlIdInput" y="8" left="98" right="10"/>
+	<mx:Label x="10" y="38" text="接続条件："/>
+	<mx:Label id="ognlLabel" x="10" y="64" text="条件式（OGNL）："/>
+	<mx:TextInput right="10" left="98" y="62" id="ognlText"/>
+	<mx:RadioButtonGroup id="radiogroup1"/>
+	<mx:RadioButton x="98.0" y="38" label="あり" groupName="radiogroup1" id="yesRadio" change="onTypeChange()"/>
+	<mx:RadioButton x="156" y="38" label="なし" groupName="radiogroup1" id="notRadio" change="onTypeChange()" selected="true"/>
+	<mx:Button label="OK" right="81" bottom="10" click="onOkButtonClick()"/>
+	<mx:Button label="Cancel" right="10" bottom="10" click="onCancelButtonClick()"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.managers.PopUpManager;
+			import org.escafe.burieditor.BuriEditorConst;
+			import org.escafe.burieditor.element.TransitionEdge;
+
+			private var _edge: TransitionEdge;
+			private var _func: Function;
+			
+			public function get transitionEdge(): TransitionEdge {
+				return _edge;
+			}
+			
+			public function set transitionEdge(newEdge: TransitionEdge): void {
+				_edge = newEdge;
+			}
+			
+			public function set okFunction(newFunc: Function): void {
+				_func = newFunc;
+			}
+			
+			private function onCreationComplete(): void {
+				xpdlIdInput.text = _edge.xpdlId;
+				if (_edge.typeId == BuriEditorConst.ID_TRANSITION_CONDITION) {
+					ognlText.text = _edge.centerLabel;
+					yesRadio.selected = true;
+					yesRadio.setFocus();
+				} else {
+					notRadio.selected = true;
+					notRadio.setFocus();
+				}
+				onTypeChange();
+			}
+			
+			private function onTypeChange(): void {
+				ognlLabel.visible = yesRadio.selected;
+				ognlText.visible = yesRadio.selected;
+			}
+			
+			private function onOkButtonClick(): void {
+				_edge.xpdlId = xpdlIdInput.text;
+				if (yesRadio.selected) {
+					_edge.centerLabel = ognlText.text;
+					_edge.typeId = BuriEditorConst.ID_TRANSITION_CONDITION;
+				} else {
+					_edge.centerLabel = null;
+					_edge.typeId = BuriEditorConst.ID_TRANSITION_NORMAL;
+				}
+				
+				PopUpManager.removePopUp(this);
+				if (_func != null) {
+					_func.apply(this, [_edge]);
+				}
+			}
+			
+			private function onCancelButtonClick(): void {
+				PopUpManager.removePopUp(this);
+			}
+
+			private function keyDown(event: KeyboardEvent): void {
+				if (event.keyCode == Keyboard.ENTER && event.ctrlKey) {
+					onOkButtonClick();
+				}
+			}
+		]]>
+	</mx:Script>
+</mx:TitleWindow>

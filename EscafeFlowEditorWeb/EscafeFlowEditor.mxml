@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:ns1="org.escafe.burieditor.application.*"
+ backgroundGradientColors="[#f8a527, #f8a527]" historyManagementEnabled="false" creationComplete="onCreationComplete()">
+	<mx:MenuBar left="0" top="0" right="0" labelField="@label" itemClick="onMenuItemClick(event)">
+		<mx:XMLList>
+			<menuitem label="ファイル">
+				<menuitem label="新規作成" id="fileNew"/>
+				<menuitem label="開く" id="fileOpen"/>
+				<menuitem label="保存" id="fileSave"/>
+			</menuitem>
+			<menuitem label="編集">
+				<menuitem label="すべて選択" id="editAllSelect"/>
+				<menuitem label="削除" id="editDelete"/>
+				<menuitem label="プロパティ" id="editProperty"/>
+			</menuitem>
+			<menuitem label="パッケージ">
+				<menuitem label="プロパティ" id="packageProperty"/>
+			</menuitem>
+			<menuitem label="プロセス">
+				<menuitem label="追加" id="workflowProcessAdd"/>
+				<menuitem label="削除" id="workflowProcessRemove"/>
+				<menuitem label="プロパティ" id="workflowProcessProperty"/>
+			</menuitem>
+			<menuitem label="アクター">
+				<menuitem label="追加" id="participantAdd"/>
+				<menuitem label="削除" id="participantRemove"/>
+				<menuitem label="プロパティ" id="participantProperty"/>
+			</menuitem>
+			<menuitem label="ヘルプ">
+				<menuitem label="このエディタについて" id="helpAbout"/>
+			</menuitem>
+		</mx:XMLList>
+	</mx:MenuBar>
+	<ns1:EmbeddedBuriEditor id="embeddedBuriEditor" top="20" bottom="0" left="0" right="0"/>
+	
+	<mx:Script source="EscafeFlowEditorScript.as"/>
+</mx:Application>

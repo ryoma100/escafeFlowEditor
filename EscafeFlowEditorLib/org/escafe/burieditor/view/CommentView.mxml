@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" borderStyle="solid">
+	<mx:Canvas height="100%">
+		<mx:Image source="@Embed(source='/assets/icon/comment.gif')" verticalCenter="0"/>
+	</mx:Canvas>
+	<mx:Text id="commentText" text="コメント" selectable="false"/>
+</mx:HBox>

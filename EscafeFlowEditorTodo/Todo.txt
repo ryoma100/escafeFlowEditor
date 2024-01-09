@@ -1,0 +1,9 @@
+TODO
+<<0.2.0で対応>>
+-OGNLの出力対応（OgnlInvoler/AfterOgnlInvoker用)
+--Scriptの入力方式の検討
+--OgnlInvoker/AfterOgnlInvoker用入力フィールドの追加
+--XPDL読み込み/書き込み対応
+
+<<0.3.0で対応>>
+TimerActivityのOGNL対応

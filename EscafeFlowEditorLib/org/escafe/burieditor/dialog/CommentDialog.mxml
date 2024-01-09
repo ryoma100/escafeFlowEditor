@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="206" title="コメントの編集"
+ close="onCancelButtonClick()" creationComplete="onCreationComplete()" keyDown="onKeyDown(event)">
+	<mx:TextArea wordWrap="true" left="10" right="10" top="10" bottom="40" id="commentText" imeMode="JAPANESE_HIRAGANA"/>
+	<mx:Button label="OK" right="81" bottom="10" click="onOkButtonClick()"/>
+	<mx:Button label="Cancel" right="10" bottom="10" click="onCancelButtonClick()"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import org.escafe.burieditor.element.CommentNode;
+			import mx.managers.PopUpManager;
+			import org.escafe.burieditor.object.Participant;
+		
+			private var _commentNode: CommentNode;
+			
+			public function set commentNode(aCommentNode: CommentNode): void {
+				_commentNode = aCommentNode;
+			}
+			
+			private function onCreationComplete(): void {
+				commentText.text = _commentNode.getView().commentText.text;
+				commentText.setFocus();
+			}
+			
+			private function onOkButtonClick(): void {
+				_commentNode.getView().commentText.text = commentText.text;
+				PopUpManager.removePopUp(this);
+			}
+			
+			private function onCancelButtonClick(): void {
+				PopUpManager.removePopUp(this);
+			}
+			
+			private function onKeyDown(event: KeyboardEvent): void {
+				if (event.keyCode == Keyboard.ENTER && event.ctrlKey) {
+					onOkButtonClick();
+				}
+			}
+		]]>
+	</mx:Script>
+</mx:TitleWindow>

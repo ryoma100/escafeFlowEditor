@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" showCloseButton="true" width="600" height="450"
+ creationPolicy="all" creationComplete="creationComplete(event)" close="cancelButtonClick()" keyDown="keyDown(event)" title="XPDLを開く">
+	<mx:TextArea id="xpdlText" left="10" top="36" right="10" bottom="40"/>
+	<mx:Button label="入力したXPDLを読み込む" right="124" bottom="10" click="okButtonClick()"/>
+	<mx:Button label="何もしないで戻る" right="10" bottom="10" click="cancelButtonClick()"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.managers.PopUpManager;
+			
+			private var _func: Function;
+			private var _xpdlString: String;
+			
+			public function set okFunction(aFunc: Function): void {
+				_func = aFunc;
+			}
+
+			public function get xpdlString(): String {
+				return _xpdlString;
+			}
+			
+			public function set xpdlString(aString: String): void {
+				_xpdlString = aString;
+				if (xpdlText != null) {
+					xpdlText.text = _xpdlString;
+				}
+			}
+		
+			private function creationComplete(event: Event): void {
+				xpdlText.text = _xpdlString;
+				xpdlText.setFocus();
+			}
+			
+			private function okButtonClick(): void {
+				_xpdlString = xpdlText.text;
+				PopUpManager.removePopUp(this);
+				if (_func != null) {
+					_func.apply(this, [_xpdlString]);
+				}
+			}
+			
+			private function cancelButtonClick(): void {
+				PopUpManager.removePopUp(this);
+			}
+
+			private function keyDown(event: KeyboardEvent): void {
+				if (event.keyCode == Keyboard.ENTER && event.ctrlKey) {
+					okButtonClick();
+				}
+			}
+		]]>
+	</mx:Script>
+	<mx:Label x="10" y="10" text="XPDLファイルの内容をコピーペーストで入力してください。"/>
+</mx:TitleWindow>

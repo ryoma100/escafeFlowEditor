@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="600" height="400" title="伝票の編集" showCloseButton="true"
+ creationComplete="onCreationComplete()" close="onCancelButtonClick()" keyDown="onKeyDown(event)">
+	<mx:DataGrid id="dataGrid" top="10" left="10" right="10" bottom="70" editable="true" sortableColumns="false"
+	 itemFocusIn="onCustomItemEditorFocusIn(event)">
+		<mx:columns>
+			<mx:DataGridColumn headerText="入力" dataField="colInput" itemRenderer="mx.controls.CheckBox" editorDataField="selected" rendererIsEditor="true" width="35"/>
+			<mx:DataGridColumn headerText="表示" dataField="colOutput" itemRenderer="mx.controls.CheckBox" editorDataField="selected" rendererIsEditor="true" width="35"/>
+			<mx:DataGridColumn headerText="項目名" dataField="colName" width="200"/>
+			<mx:DataGridColumn headerText="入力形式" dataField="colType" itemEditor="mx.controls.ComboBox" width="150"/>
+			<mx:DataGridColumn headerText="例" dataField="sample1"/>
+		</mx:columns>
+	</mx:DataGrid>
+	<mx:Button label="追加" bottom="40" left="10" click="onAddButtonClick()"/>
+	<mx:Button label="削除" bottom="40" left="66" click="onRemoveButtonClick()"/>
+	<mx:Button label="↑" bottom="40" left="122" click="onUpButtonClick()"/>
+	<mx:Button label="↓" bottom="40" left="170" click="onDownButtonClick()"/>
+	<mx:Button label="OK" right="81" bottom="10" click="onOkButtonClick()"/>
+	<mx:Button label="Cancel" right="10" bottom="10" click="onCancelButtonClick()"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.events.DataGridEvent;
+			import mx.states.AddChild;
+			import mx.controls.ComboBox;
+			import mx.core.Application;
+			import flash.utils.setInterval;
+			import mx.managers.PopUpManager;
+			import mx.collections.ArrayCollection;
+			
+			private var _denpyoCols: ArrayCollection = new ArrayCollection();
+			private var _colTypes: ArrayCollection = new ArrayCollection();
+			
+			public function onCreationComplete(): void {
+				dataGrid.dataProvider = _denpyoCols;
+				_colTypes.addItem("数値");
+				_colTypes.addItem("文字列");
+				_colTypes.addItem("日時");
+				_colTypes.addItem("通貨");
+			}
+			
+            private function onCustomItemEditorFocusIn(e: DataGridEvent):void {
+                var dg:DataGrid = e.currentTarget as DataGrid;
+                if(dg.itemEditorInstance && dg.itemEditorInstance is ComboBox){
+                    var col:DataGridColumn = e.currentTarget.columns[e.columnIndex];
+                    var editor:ComboBox = dg.itemEditorInstance as ComboBox;
+                    var cell:Object = dg.selectedItem.hasOwnProperty(col.dataField) ? dg.selectedItem[col.dataField] : "";
+                    
+                    editor.dataProvider = _colTypes;
+                    if(cell){
+                        editor.selectedItem = cell.toString();
+                    }
+                    editor.open();
+                }
+                
+            }
+            
+			private function onAddButtonClick(): void {
+				var item: Object = new Object();
+				item["colInput"] = false;
+				item["colOutput"] = true;
+				item["colName"] = "登録日付";
+				item["colType"] = "日時";
+				item["sample1"] = new Date().toString();
+				_denpyoCols.addItem(item);
+			}
+			
+			private function onRemoveButtonClick(): void {
+				if (dataGrid.selectedIndex >= 0) {
+					_denpyoCols.removeItemAt(dataGrid.selectedIndex);
+				}
+			}
+
+			private function onUpButtonClick(): void {
+				if (dataGrid.selectedIndex > 0) {
+					var index: int = dataGrid.selectedIndex;
+					var item: Object = _denpyoCols.getItemAt(index);
+					_denpyoCols.removeItemAt(index);
+					_denpyoCols.addItemAt(item, index - 1);
+					dataGrid.selectedItem = item;
+				}
+			}
+			
+			private function onDownButtonClick(): void {
+				if (dataGrid.selectedIndex >= 0 && dataGrid.selectedIndex < _denpyoCols.length - 1) {
+					var index: int = dataGrid.selectedIndex;
+					var item: Object = _denpyoCols.getItemAt(index);
+					_denpyoCols.removeItemAt(index);
+					_denpyoCols.addItemAt(item, index + 1);
+					dataGrid.selectedItem = item;
+				}
+			}
+			private function onOkButtonClick(): void {
+				PopUpManager.removePopUp(this);
+			}
+
+			private function onCancelButtonClick(): void {
+				PopUpManager.removePopUp(this);
+			}
+
+			private function onKeyDown(event: KeyboardEvent): void {
+				if (event.keyCode == Keyboard.ENTER && event.ctrlKey) {
+					onOkButtonClick();
+				}
+			}
+		]]>
+	</mx:Script>
+</mx:TitleWindow>

@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="500" height="450" title="仕事の編集" showCloseButton="true" xmlns:ns1="org.escafe.toolbar.*"
+ creationPolicy="all" creationComplete="onCreationComplete()" close="onCancelButtonClick()" keyDown="keyDown(event)">
+	<ns1:HToolBar id="htoolbar" left="10" top="10" right="10">
+		<mx:Button id="manualActivity" icon="@Embed(source='/assets/icon/manual.gif')" width="68" height="52" toolTip="手動アクティビティ"/>
+		<mx:Button id="autoActivity" icon="@Embed(source='/assets/icon/auto.gif')" width="68" height="52" toolTip="自動アクティビティ"/>
+		<mx:Button id="manualTimerActivity" icon="@Embed(source='/assets/icon/manualTimer.gif')" width="68" height="52" toolTip="手動(時間制限)アクティビティ"/>
+		<mx:Button id="autoTimerActivity" icon="@Embed(source='/assets/icon/autoTimer.gif')" width="68" height="52" toolTip="自動(時間制限)アクティビティ"/>
+		<mx:Button id="userActivity" icon="@Embed(source='/assets/icon/user.gif')" width="68" height="52" toolTip="手作業"/>
+	</ns1:HToolBar>
+	<mx:TabNavigator left="10" top="70" right="10" bottom="40" selectedIndex="1">
+		<mx:Canvas id="joinPain" label="はじまり" width="100%" height="100%">
+			<mx:Label x="10" y="10" text="前の仕事が・・・"/>
+			<mx:RadioButtonGroup id="radiogroup1"/>
+			<mx:RadioButton id="joinXorRadio" x="10.0" y="36.0" label="ひとつでも終わったら" groupName="radiogroup1" selected="true"/>
+			<mx:RadioButton id="joinAndRadio" x="10.0" y="60.0" label="すべて終わったら" groupName="radiogroup1"/>
+			<mx:Label x="86" y="86" text="この仕事を行う。"/>
+		</mx:Canvas>
+		<mx:Canvas label="仕事" width="100%" height="100%">
+			<mx:Label x="10" y="10" text="ID："/>
+			<mx:TextInput id="xpdlId" y="8" right="10" left="98"/>
+			<mx:Label x="10" y="42" text="仕事名："/>
+			<mx:TextInput id="activityNameText" right="10" left="98" height="22" imeMode="JAPANESE_HIRAGANA" y="40"/>
+			<mx:Label x="10" y="72" text="アクター："/>
+			<mx:ComboBox id="particpantCombo" top="70" width="350" right="10" labelField="participantName"/>
+			<mx:ViewStack id="viewstack" left="10" bottom="10" width="80" top="100">
+				<mx:Canvas label="userPain" width="100%" height="100%">
+				</mx:Canvas>
+				<mx:Canvas label="autoPain" width="100%" height="100%">
+					<mx:TextArea x="0" text="処理内容&#xa;（OGNL）：" editable="false" height="55" width="80" borderStyle="none" selectable="false" verticalCenter="0" tabEnabled="false"/>
+				</mx:Canvas>
+				<mx:Canvas label="timerPain" width="100%" height="100%">
+					<mx:Label text="いつ実行する?"/>
+					<mx:TextArea x="0" text="自動実行の設定&#xa;（OGNL）：" editable="false" height="55" width="80" borderStyle="none" selectable="false" verticalCenter="0" tabEnabled="false"/>
+				</mx:Canvas>
+			</mx:ViewStack>
+			<mx:ViewStack id="ognlViewStack">
+			    <mx:Canvas id="userOgnlPain"/>
+			    <mx:Canvas id="autoOgnlPain">
+                    <mx:TabNavigator width="350" height="157" x="98" y="100" id="autoOgnlTabs"/>
+			    </mx:Canvas>
+                <mx:Canvas id="timerOgnlPain">
+                	<mx:VBox width="350" height="157" x="98" y="100">
+                		<mx:TextInput id="timerOgnlInputText" width="100%"/>
+                    	<mx:TabNavigator width="350" height="120" x="98" y="100" id="timerOgnlTabs"/>
+                	</mx:VBox>
+                </mx:Canvas>
+            </mx:ViewStack>
+		</mx:Canvas>
+		<mx:Canvas id="splitPain" label="終わったら" width="100%" height="100%">
+			<mx:Label x="10" y="10" text="後続の仕事への接続条件を満たす・・・"/>
+			<mx:RadioButtonGroup id="radiogroup2"/>
+			<mx:RadioButton id="splitXorRadio" x="10.0" y="36.0" label="どれかひとつ" groupName="radiogroup2" selected="true"/>
+			<mx:RadioButton id="splitAndRadio" x="10.0" y="60.0" label="すべて" groupName="radiogroup2"/>
+			<mx:Label x="146" y="88" text="に続く"/>
+		</mx:Canvas>
+	</mx:TabNavigator>
+	<mx:Button label="OK" bottom="10" right="81" click="onOkButtonClick()"/>
+	<mx:Button label="Cancel" bottom="10" right="10" click="onCancelButtonClick()"/>
+
+	<mx:Script>
+		<![CDATA[
+		    import org.escafe.burieditor.component.BuriOgnlEditor;
+		    import mx.controls.Label;
+		    import org.escafe.burieditor.object.XpdlApplication;
+		    import mx.containers.VBox;
+		    import org.escafe.burieditor.object.Tool;
+			import org.escafe.burieditor.component.BuriGraphEditor;
+			import mx.controls.Alert;
+			import org.escafe.graph.element.Node;
+			import org.escafe.burieditor.object.Participant;
+			import mx.collections.ArrayCollection;
+			import mx.managers.PopUpManager;
+			import org.escafe.burieditor.element.ActivityNode;
+			import org.escafe.burieditor.BuriEditorConst;
+			
+			private var _node: ActivityNode;
+			private var _graphCanvas: BuriGraphEditor;
+			private var _func: Function;
+			
+			public function get activityNode(): ActivityNode {
+				return _node;
+			}
+			
+			public function set activityNode(newNode: ActivityNode): void {
+				_node = newNode;
+			}
+			
+			public function set graphCanvas(newGraphCanvas: BuriGraphEditor): void {
+				_graphCanvas = newGraphCanvas;
+			}
+			
+			public function set okFunction(newFunc: Function): void {
+				_func = newFunc;
+			}
+			
+			private function onCreationComplete(): void {
+				htoolbar.changeFunction = onToolBarChanged;
+				htoolbar.buttonId = _node.typeId;
+				xpdlId.text = _node.xpdlId;
+				particpantCombo.dataProvider = _graphCanvas.getBuriProcessEditor().participants;
+				particpantCombo.selectedItem = _node.participant;
+
+				switch (_node.joinTypeId) {
+					case BuriEditorConst.ID_XOR_JOIN:
+						joinXorRadio.selected = true;
+						break;
+					case BuriEditorConst.ID_AND_JOIN:
+						joinAndRadio.selected = true;
+						break
+					default:
+						joinPain.enabled = false;
+						break;
+				}
+				
+				activityNameText.text = _node.activityName;
+
+                //Auto用OGNL設定
+                var addCanvas:Canvas = createEmpltyOgnlTab();
+                autoOgnlTabs.addChild(addCanvas);
+        		
+                //Timer用OGNL設定
+                timerOgnlInputText.text = _node.limit;
+                var addTimerCanvas:Canvas = createEmpltyOgnlTab();
+                timerOgnlTabs.addChild(addTimerCanvas);
+
+                switch (_node.typeId) {
+                    case BuriEditorConst.ID_AUTO_ACTIVITY:
+                        for each (var autoTool:Tool in _node.tools) {
+                            var autoBuriOgnlEditor:BuriOgnlEditor = new BuriOgnlEditor(autoTool,_graphCanvas.getBuriProcessEditor().applications);
+                            autoOgnlTabs.addChild(autoBuriOgnlEditor);
+                        }
+                    break;
+                    case BuriEditorConst.ID_AUTO_TIMER_ACTIVITY:
+                    case BuriEditorConst.ID_MANUAL_TIMER_ACTIVITY:
+                        for each (var timerTool:Tool in _node.tools) {
+                            var timerBuriOgnlEditor:BuriOgnlEditor = new BuriOgnlEditor(timerTool,_graphCanvas.getBuriProcessEditor().applications);
+                            timerOgnlTabs.addChild(timerBuriOgnlEditor);
+                        }
+                    break;
+				}
+				
+				switch (_node.splitTypeId) {
+					case BuriEditorConst.ID_XOR_SPLIT:
+						splitXorRadio.selected = true;
+						break;
+					case BuriEditorConst.ID_AND_SPLIT:
+						splitAndRadio.selected = true;
+						break;
+					default:
+						splitPain.enabled = false;
+						break;
+				}
+
+				activityNameText.setFocus();
+			}
+			
+			private function onToolBarChanged(): void {
+				switch (htoolbar.buttonId) {
+					case BuriEditorConst.ID_MANUAL_ACTIVITY:
+					case BuriEditorConst.ID_USER_ACTIVITY:
+						viewstack.selectedIndex = 0;
+                        ognlViewStack.selectedIndex = 0;
+						break;
+					case BuriEditorConst.ID_AUTO_ACTIVITY:
+						viewstack.selectedIndex = 1;
+                        ognlViewStack.selectedIndex = 1;
+						break;
+					case BuriEditorConst.ID_AUTO_TIMER_ACTIVITY:
+					case BuriEditorConst.ID_MANUAL_TIMER_ACTIVITY:
+						viewstack.selectedIndex = 2;
+                        ognlViewStack.selectedIndex = 2;
+						break;
+				}
+			}
+			
+			private function onOkButtonClick(): void {
+				for each (var aNode: Node in _graphCanvas.nodeStage.getChildren()) {
+					if (aNode != _node && aNode is ActivityNode && (aNode as ActivityNode).xpdlId == xpdlId.text) {
+						Alert.show("このIDは、すでに使用されています。");
+						return;
+					}
+				}
+				
+				_node.typeId = htoolbar.buttonId;
+				_node.xpdlId = xpdlId.text;
+				_node.participant = particpantCombo.selectedItem as Participant;
+				
+				if (joinPain.enabled) {
+					if (joinXorRadio.selected) {
+						_node.joinTypeId = BuriEditorConst.ID_XOR_JOIN;
+					} else {
+						_node.joinTypeId = BuriEditorConst.ID_AND_JOIN;
+					}
+				}
+				
+				_node.activityName = activityNameText.text;
+				if (htoolbar.buttonId == BuriEditorConst.ID_MANUAL_ACTIVITY || htoolbar.buttonId == BuriEditorConst.ID_MANUAL_ACTIVITY) {
+                    _node.tools.removeAll();
+				    _node.limit = "";
+				}
+				
+				switch (htoolbar.buttonId) {
+				    case BuriEditorConst.ID_AUTO_ACTIVITY:
+                        _node.limit = "";
+                        _node.tools.removeAll();
+                        var ognlEditors:ArrayCollection = new ArrayCollection(autoOgnlTabs.getChildren());
+                        var ognlEditorCount:int = ognlEditors.length;
+                        for(var subIndex:int = 1; subIndex<ognlEditorCount; subIndex++) {
+                            var ognlEditor:BuriOgnlEditor = ognlEditors.getItemAt(subIndex) as BuriOgnlEditor
+                            var tool:Tool = ognlEditor.getTool();
+                            if(tool == null) {
+                                continue;
+                            }
+                            _node.tools.addItem(tool);
+                        }
+				    break;
+				    case BuriEditorConst.ID_AUTO_TIMER_ACTIVITY:
+				    case BuriEditorConst.ID_MANUAL_TIMER_ACTIVITY:
+                        _node.tools.removeAll();
+                        _node.limit = timerOgnlInputText.text;
+                        var ognlEditors:ArrayCollection = new ArrayCollection(timerOgnlTabs.getChildren());
+                        var ognlEditorCount:int = ognlEditors.length;
+                        for(var subIndex:int = 1; subIndex<ognlEditorCount; subIndex++) {
+                            var ognlEditor:BuriOgnlEditor = ognlEditors.getItemAt(subIndex) as BuriOgnlEditor
+                            var tool:Tool = ognlEditor.getTool();
+                            if(tool == null) {
+                                continue;
+                            }
+                            _node.tools.addItem(tool);
+                        }
+                    break;
+                }
+
+				if (splitPain.enabled) {
+					if (splitXorRadio.selected) {
+						_node.splitTypeId = BuriEditorConst.ID_XOR_SPLIT;
+					} else {
+						_node.splitTypeId = BuriEditorConst.ID_AND_SPLIT;
+					}
+				}				
+				
+				PopUpManager.removePopUp(this);
+				if (_func != null) {
+					_func.apply(this, [_node]);
+				}
+			}
+			
+			private function onCancelButtonClick(): void {
+				PopUpManager.removePopUp(this);
+			}
+
+			private function keyDown(event: KeyboardEvent): void {
+				if (event.keyCode == Keyboard.ENTER && event.ctrlKey) {
+					onOkButtonClick();
+				}
+			}
+			
+			private function createEmpltyOgnlTab(): Canvas {
+			    var vbox:VBox = new VBox();
+
+                var applicationSize:int = _graphCanvas.getBuriProcessEditor().applications.length;
+                if(applicationSize != 0){
+                    var addTabBtn:Button = new Button();
+                    addTabBtn.label = "OGNLの入力タブを追加します";
+                    addTabBtn.addEventListener(MouseEvent.CLICK,onTabAddClick);			    
+			        vbox.addChild(addTabBtn);
+                } else {
+                    var label:Label = new Label();
+                    label.text = "プロセスのアプリケーションを登録して下さい。";
+                    vbox.addChild(label);
+                }
+			    
+                var addCanvas:Canvas = new Canvas();
+                addCanvas.label = "＋";
+
+                addCanvas.addChild(vbox);
+                return addCanvas;
+			}
+			
+			private function onTabAddClick(evt:MouseEvent):void {
+			    var emptyTool:Tool = new Tool();
+                var emptyBuriOgnlEditor:BuriOgnlEditor = new BuriOgnlEditor(emptyTool,_graphCanvas.getBuriProcessEditor().applications);
+                switch(htoolbar.buttonId) {
+                    case BuriEditorConst.ID_AUTO_ACTIVITY:
+                        autoOgnlTabs.addChild(emptyBuriOgnlEditor);
+                    break
+                    case BuriEditorConst.ID_AUTO_TIMER_ACTIVITY:
+                    case BuriEditorConst.ID_MANUAL_TIMER_ACTIVITY:
+                        timerOgnlTabs.addChild(emptyBuriOgnlEditor);
+                    break
+                }
+			}
+			
+		]]>
+	</mx:Script>
+	
+</mx:TitleWindow>

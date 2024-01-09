@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="340" height="300"
+ creationComplete="onCreationComplete()" showCloseButton="true" close="onOkButtonClick()" keyDown="onKeyDown(event)">
+	<mx:Image x="10" y="10" source="assets/buri_base.png"/>
+	<mx:Button label="OK" horizontalCenter="0" bottom="10" click="onOkButtonClick()"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.managers.PopUpManager;
+			import org.escafe.burieditor.BuriEditorConst;
+
+			private function onCreationComplete(): void {
+				title = "EscafeFlow Editor ver" + BuriEditorConst.VERSION;
+			}
+		
+			private function onOkButtonClick(): void {
+				PopUpManager.removePopUp(this);
+			}
+
+			private function onKeyDown(event: KeyboardEvent): void {
+				if (event.keyCode == Keyboard.ENTER && event.ctrlKey) {
+					onOkButtonClick();
+				}
+			}
+		]]>
+	</mx:Script>
+	
+</mx:TitleWindow>

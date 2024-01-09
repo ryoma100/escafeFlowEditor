@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="460" height="570" title="ワークフロープロセスの編集"
+ showCloseButton="true" close="onCancelButtonClick()" creationComplete="onCreationComplete()" keyDown="keyDown(event)">
+	<mx:Label x="10" y="10" text="ID："/>
+	<mx:Label x="23" y="432" text="From："/>
+	<mx:Label x="23" y="460" text="To:"/>
+	<mx:TextInput y="8" right="66" width="305" id="xpdlInput"/>
+	<mx:Label x="10" y="40" text="名前："/>
+	<mx:TextInput y="38" width="305" right="66" id="processNameInput"/>
+	<mx:Label x="10" y="70" text="拡張設定："/>
+	<mx:Label x="10" y="234" text="アプリケーション："/>
+	<mx:Label x="10" y="408" text="有効期限："/>
+	<mx:DataGrid id="dataGrid" editable="true" height="106" y="87" width="420" x="10">
+		<mx:columns>
+			<mx:DataGridColumn headerText="名前（Name）" dataField="name"/>
+			<mx:DataGridColumn headerText="値（Value）" dataField="value"/>
+		</mx:columns>
+	</mx:DataGrid>
+    <mx:Button label="追加" top="201" left="326" click="onAddButtonClick()"/>
+    <mx:Button label="削除" top="201" left="382" click="onRemoveButtonClick()"/>
+
+	<mx:DataGrid id="applicationDataGrid" editable="true" height="128" y="250" width="420" x="10">
+		<mx:columns>
+			<mx:DataGridColumn headerText="ID" dataField="xpdlId"/>
+			<mx:DataGridColumn headerText="名前（Name）" dataField="applicationName"/>
+            <mx:DataGridColumn headerText="拡張名（Name）" dataField="attributeName"/>
+            <mx:DataGridColumn headerText="拡張値（Value）" dataField="attributeValue"/>
+		</mx:columns>
+	</mx:DataGrid>
+    <mx:Button label="追加" top="386" left="326" click="onAddApplicationButtonClick()"/>
+    <mx:Button label="削除" top="386" left="382" click="onRemoveApplicationButtonClick()"/>
+
+    <mx:Label x="237" y="432" text="入力例)2009/1/2"/>
+    <mx:TextInput x="69" y="430" id="validDateFrom"/>
+    <mx:Label x="237" y="460" text="入力例)2009/1/2"/>
+    <mx:TextInput x="69" y="458" id="validDateTo"/>
+
+	<mx:Button label="OK" right="81" bottom="10" click="onOkButtonClick()"/>
+	<mx:Button label="Cancel" right="10" bottom="10" click="onCancelButtonClick()"/>
+
+	<mx:Script>
+		<![CDATA[
+		    import org.escafe.burieditor.object.XpdlApplication;
+			import org.escafe.burieditor.object.Attribute;
+			import mx.controls.Alert;
+			import mx.containers.ViewStack;
+			import org.escafe.burieditor.component.BuriProcessEditor;
+			import mx.collections.ArrayCollection;
+			import mx.managers.PopUpManager;
+
+			private var _process: BuriProcessEditor;
+			private var _workingDataset: ArrayCollection;
+            private var _applicationDataset: ArrayCollection;
+		
+			public function set process(newProcess: BuriProcessEditor): void {
+				_process = newProcess;
+			}
+
+			private function onCreationComplete(): void {
+				xpdlInput.text = _process.xpdlId;
+				processNameInput.text = _process.processName;
+				_workingDataset = new ArrayCollection(_process.processAttributes.toArray())
+				dataGrid.dataProvider = _workingDataset;
+				
+				_applicationDataset = new ArrayCollection();
+				for each(var application: XpdlApplication in _process.applications) {
+				    if(application.isPackageLevel == false) {
+				        _applicationDataset.addItem(application);
+				    }
+				}
+				applicationDataGrid.dataProvider = _applicationDataset;
+				
+				validDateFrom.text = _process.validDateFrom;
+                validDateTo.text = _process.validDateTo;
+			}
+			
+			private function onOkButtonClick(): void {
+				for each (var aProcess: BuriProcessEditor in (_process.parent as ViewStack).getChildren()) {
+					if (aProcess != _process && aProcess.xpdlId == xpdlInput.text) {
+						Alert.show("このIDは、すでに使用されています。");
+						return;
+					}
+				}
+
+				_process.xpdlId = xpdlInput.text;
+				_process.processName = processNameInput.text;
+				_process.processAttributes.removeAll();
+				for each (var attribute: Attribute in _workingDataset) {
+					_process.processAttributes.addItem(attribute);
+				}
+
+                var nameArray:ArrayCollection = new ArrayCollection();
+                for each (var applicatoin: XpdlApplication in _applicationDataset) {
+                    var xpdlId:String = applicatoin.xpdlId;
+                    if(xpdlId == "") {
+                        Alert.show("ApplicationのIDはブランクに出来ません。","入力した値にエラーがあります。");
+                        return;
+                    }
+                    if(nameArray.contains(xpdlId) == true) {
+                        Alert.show("ApplicationのIDは重複しないようにして下さい。","入力した値にエラーがあります。");
+                        return;
+                    }
+                    nameArray.addItem(xpdlId);
+                }
+                
+                var savePackageApplications:ArrayCollection = new ArrayCollection();
+                for each (var application:XpdlApplication in _process.applications) {
+                    if(application.isPackageLevel == true) {
+                        savePackageApplications.addItem(application);
+                    }
+                }
+                
+                _process.applications.removeAll();
+
+                for each (var application:XpdlApplication in savePackageApplications) {
+                    _process.applications.addItem(application);
+                }
+                
+				for each (var application: XpdlApplication in _applicationDataset) {
+				    var newApplication: XpdlApplication = new XpdlApplication();
+				    newApplication.xpdlId = application.xpdlId;
+                    newApplication.applicationName = application.applicationName;
+                    if(application.attributeName != "" || application.attributeValue != "") {
+                        newApplication.attribute = application.attribute
+                    }
+				    _process.applications.addItem(newApplication);
+				}
+				
+				_process.validDateFrom = validDateFrom.text;
+				_process.validDateTo = validDateTo.text
+				
+				PopUpManager.removePopUp(this);
+			}
+			
+			private function onCancelButtonClick(): void {
+				PopUpManager.removePopUp(this);
+			}
+			
+			private function onAddButtonClick(): void {
+				var attribute: Attribute = new Attribute();
+				attribute.name = "name";
+				attribute.value = "value";
+				_workingDataset.addItem(attribute);
+			}
+			
+			private function onRemoveButtonClick(): void {
+				_workingDataset.removeItemAt(dataGrid.selectedIndex);
+			}
+
+			private function keyDown(event: KeyboardEvent): void {
+				if (event.keyCode == Keyboard.ENTER && event.ctrlKey) {
+					onOkButtonClick();
+				}
+			}
+			
+            private function onAddApplicationButtonClick(): void {
+                var application:XpdlApplication = new XpdlApplication();
+                application.xpdlId = "xpdlId";
+                application.applicationName = "name"
+                _applicationDataset.addItem(application);
+            }
+            
+            private function onRemoveApplicationButtonClick(): void {
+                _applicationDataset.removeItemAt(applicationDataGrid.selectedIndex);
+            }
+			
+		]]>
+	</mx:Script>	
+
+</mx:TitleWindow>

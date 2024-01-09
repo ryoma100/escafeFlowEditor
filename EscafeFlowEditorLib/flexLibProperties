@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties version="1">
+  <includeClasses>
+    <classEntry path="org.escafe.burieditor.BuriEditorConst"/>
+    <classEntry path="org.escafe.burieditor.component.BuriGraphEditor"/>
+    <classEntry path="org.escafe.burieditor.component.BuriOgnlEditor"/>
+    <classEntry path="org.escafe.burieditor.component.BuriProcessEditor"/>
+    <classEntry path="org.escafe.burieditor.dialog.ActivityDialog"/>
+    <classEntry path="org.escafe.burieditor.dialog.CommentDialog"/>
+    <classEntry path="org.escafe.burieditor.dialog.DenpyouDialog"/>
+    <classEntry path="org.escafe.burieditor.dialog.PackageDialog"/>
+    <classEntry path="org.escafe.burieditor.dialog.ParticipantDialog"/>
+    <classEntry path="org.escafe.burieditor.dialog.ProcessDialog"/>
+    <classEntry path="org.escafe.burieditor.dialog.TransitionDialog"/>
+    <classEntry path="org.escafe.burieditor.dialog.XpdlOpenDialog"/>
+    <classEntry path="org.escafe.burieditor.dialog.XpdlSaveDialog"/>
+    <classEntry path="org.escafe.burieditor.drag.CreateEdgeStrategy"/>
+    <classEntry path="org.escafe.burieditor.drag.MoveEdgeSourceStrategy"/>
+    <classEntry path="org.escafe.burieditor.drag.MoveEdgeTargetStrategy"/>
+    <classEntry path="org.escafe.burieditor.drag.ResizeNodeLeftStrategy"/>
+    <classEntry path="org.escafe.burieditor.drag.ResizeNodeRightStrategy"/>
+    <classEntry path="org.escafe.burieditor.element.ActivityNode"/>
+    <classEntry path="org.escafe.burieditor.element.CommentEdge"/>
+    <classEntry path="org.escafe.burieditor.element.CommentNode"/>
+    <classEntry path="org.escafe.burieditor.element.StartEndEdge"/>
+    <classEntry path="org.escafe.burieditor.element.StartEndNode"/>
+    <classEntry path="org.escafe.burieditor.element.TransitionEdge"/>
+    <classEntry path="org.escafe.burieditor.object.Attribute"/>
+    <classEntry path="org.escafe.burieditor.object.Participant"/>
+    <classEntry path="org.escafe.burieditor.object.Tool"/>
+    <classEntry path="org.escafe.burieditor.object.XpdlApplication"/>
+    <classEntry path="org.escafe.burieditor.view.ActivityView"/>
+    <classEntry path="org.escafe.burieditor.view.CommentView"/>
+    <classEntry path="org.escafe.burieditor.view.StartView"/>
+    <classEntry path="org.escafe.burieditor.view.StopView"/>
+    <classEntry path="org.escafe.burieditor.xpdl.XpdlReader"/>
+    <classEntry path="org.escafe.burieditor.xpdl.XpdlWriter"/>
+  </includeClasses>
+  <includeResources>
+    <resourceEntry destPath="assets/activity/auto.gif" sourcePath="assets/activity/auto.gif"/>
+    <resourceEntry destPath="assets/activity/end.gif" sourcePath="assets/activity/end.gif"/>
+    <resourceEntry destPath="assets/icon/transition.gif" sourcePath="assets/icon/transition.gif"/>
+    <resourceEntry destPath="assets/activity/start.gif" sourcePath="assets/activity/start.gif"/>
+    <resourceEntry destPath="assets/activity/manualTimer.gif" sourcePath="assets/activity/manualTimer.gif"/>
+    <resourceEntry destPath="assets/icon/user.gif" sourcePath="assets/icon/user.gif"/>
+    <resourceEntry destPath="assets/icon/manual.gif" sourcePath="assets/icon/manual.gif"/>
+    <resourceEntry destPath="assets/activity/user.gif" sourcePath="assets/activity/user.gif"/>
+    <resourceEntry destPath="assets/icon/start.gif" sourcePath="assets/icon/start.gif"/>
+    <resourceEntry destPath="assets/icon/manualTimer.gif" sourcePath="assets/icon/manualTimer.gif"/>
+    <resourceEntry destPath="assets/smallActivity/start.PNG" sourcePath="assets/smallActivity/start.PNG"/>
+    <resourceEntry destPath="assets/smallActivity/end.PNG" sourcePath="assets/smallActivity/end.PNG"/>
+    <resourceEntry destPath="assets/icon/autoTimer.gif" sourcePath="assets/icon/autoTimer.gif"/>
+    <resourceEntry destPath="assets/icon/auto.gif" sourcePath="assets/icon/auto.gif"/>
+    <resourceEntry destPath="assets/icon/end.gif" sourcePath="assets/icon/end.gif"/>
+    <resourceEntry destPath="assets/smallActivity/manual.PNG" sourcePath="assets/smallActivity/manual.PNG"/>
+    <resourceEntry destPath="assets/smallActivity/auto.PNG" sourcePath="assets/smallActivity/auto.PNG"/>
+    <resourceEntry destPath="assets/smallActivity/autoTimer.PNG" sourcePath="assets/smallActivity/autoTimer.PNG"/>
+    <resourceEntry destPath="assets/activity/autoTimer.gif" sourcePath="assets/activity/autoTimer.gif"/>
+    <resourceEntry destPath="assets/smallActivity/user.PNG" sourcePath="assets/smallActivity/user.PNG"/>
+    <resourceEntry destPath="assets/smallActivity/manualTimer.PNG" sourcePath="assets/smallActivity/manualTimer.PNG"/>
+    <resourceEntry destPath="assets/activity/manual.gif" sourcePath="assets/activity/manual.gif"/>
+    <resourceEntry destPath="assets/icon/point.gif" sourcePath="assets/icon/point.gif"/>
+    <resourceEntry destPath="assets/icon/comment.gif" sourcePath="assets/icon/comment.gif"/>
+  </includeResources>
+  <namespaceManifests/>
+</flexLibProperties>

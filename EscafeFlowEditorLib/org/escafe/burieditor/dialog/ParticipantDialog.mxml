@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="150" title="アクターの編集"
+ close="onCancelButtonClick()" creationComplete="onCreationComplete()" keyDown="onKeyDown(event)">
+	<mx:Label x="10" y="10" text="ID："/>
+	<mx:Label x="10" y="40" text="名前："/>
+	<mx:TextInput y="8" left="48" right="10" id="xpdlIdInput"/>
+	<mx:TextInput y="38" id="participantNameInput" right="10" left="48" imeMode="JAPANESE_HIRAGANA"/>
+	<mx:RadioButtonGroup id="radiogroup1"/>
+	<mx:Button label="OK" right="81" bottom="10" click="onOkButtonClick()"/>
+	<mx:Button label="Cancel" right="10" bottom="10" click="onCancelButtonClick()"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.managers.PopUpManager;
+			import org.escafe.burieditor.object.Participant;
+		
+			private var _participant: Participant;
+			
+			public function set participant(newParticipant: Participant): void {
+				_participant = newParticipant;
+			}
+			
+			private function onCreationComplete(): void {
+				xpdlIdInput.text = _participant.xpdlId;
+				participantNameInput.text = _participant.participantName;
+			}
+			
+			private function onOkButtonClick(): void {
+				_participant.xpdlId = xpdlIdInput.text;
+				_participant.participantName = participantNameInput.text;
+				PopUpManager.removePopUp(this);
+			}
+			
+			private function onCancelButtonClick(): void {
+				PopUpManager.removePopUp(this);
+			}
+			
+			private function onKeyDown(event: KeyboardEvent): void {
+				if (event.keyCode == Keyboard.ENTER && event.ctrlKey) {
+					onOkButtonClick();
+				}
+			}
+		]]>
+	</mx:Script>
+</mx:TitleWindow>

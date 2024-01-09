@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flexLibProperties version="1">
+<includeClasses>
+<classEntry path="org.escafe.graph.bitmap.BitmapUtil"/>
+<classEntry path="org.escafe.graph.component.Graph"/>
+<classEntry path="org.escafe.graph.component.GraphEditor"/>
+<classEntry path="org.escafe.graph.drag.AbstractDragStrategy"/>
+<classEntry path="org.escafe.graph.drag.AbstractScrollStrategy"/>
+<classEntry path="org.escafe.graph.drag.AlignRotateStrategy"/>
+<classEntry path="org.escafe.graph.drag.AlignSpaceStrategy"/>
+<classEntry path="org.escafe.graph.drag.MoveNodeStrategy"/>
+<classEntry path="org.escafe.graph.drag.ScrollStrategy"/>
+<classEntry path="org.escafe.graph.drag.SelectCircleStrategy"/>
+<classEntry path="org.escafe.graph.drag.SelectRectangleStrategy"/>
+<classEntry path="org.escafe.graph.drag.SelectStrategy"/>
+<classEntry path="org.escafe.graph.element.Edge"/>
+<classEntry path="org.escafe.graph.element.Element"/>
+<classEntry path="org.escafe.graph.element.Node"/>
+<classEntry path="org.escafe.graph.geometry.GeomUtils"/>
+<classEntry path="org.escafe.graph.geometry.Line"/>
+</includeClasses>
+<includeResources/>
+<namespaceManifests/>
+</flexLibProperties>

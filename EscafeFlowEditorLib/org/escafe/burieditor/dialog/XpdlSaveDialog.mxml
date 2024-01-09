@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" showCloseButton="true" width="600" height="450"
+ creationPolicy="all" creationComplete="creationComplete(event)" close="closeButtonClick()" keyDown="keyDown(event)" title="XPDLを保存">
+	<mx:TextArea id="xpdlText" left="10" top="36" right="10" bottom="40"/>
+	<mx:Button right="10" bottom="10" click="closeButtonClick()" label="戻る"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.managers.PopUpManager;
+			
+			private var _xpdlString: String;
+			
+			public function get xpdlString(): String {
+				return _xpdlString;
+			}
+			
+			public function set xpdlString(aString: String): void {
+				_xpdlString = aString;
+				if (xpdlText != null) {
+					xpdlText.text = _xpdlString;
+				}
+			}
+		
+			private function creationComplete(event: Event): void {
+				xpdlText.text = _xpdlString;
+				xpdlText.setFocus();
+			}
+			
+			private function closeButtonClick(): void {
+				PopUpManager.removePopUp(this);
+			}
+
+			private function keyDown(event: KeyboardEvent): void {
+				if (event.keyCode == Keyboard.ENTER && event.ctrlKey) {
+					closeButtonClick();
+				}
+			}
+		]]>
+	</mx:Script>
+	<mx:Label x="10" y="10" text="テキストエディタを開き、下記のXPDLの内容をコピーペーストして保存してください。"/>
+</mx:TitleWindow>
