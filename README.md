@@ -1,2 +1,2 @@
-# escafe-flow-editor
-http://www.escafe.org/escafeFlowEditor/
+# escafeFlowEditor
+Search the web for "escafeFlowEditor"
