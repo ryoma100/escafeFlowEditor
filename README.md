@@ -1,4 +1,9 @@
 # escafeFlowEditor
-Search the web for "escafeFlowEditor"
 
-- `https://www.escafe.org/escafeFlowEditor/` (Public Site Lost)
+Open "EscafeFlowEditor.swf" in the debug version of Flash Player.
+
+<img width="808" alt="flow" src="flow.png">
+
+### Public Site
+
+`https://www.escafe.org/escafeFlowEditor/` (Lost)
